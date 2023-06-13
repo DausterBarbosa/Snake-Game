@@ -16,12 +16,13 @@ GLuint textureIDs[18];
 GLuint bgID1, bgID2;
 char direcao = 'R';
 int sprite = 0;
+int delay = 180;
 
 void screenUpdate(int value)
 {
   moverSnake(snake, direcao, 200, 200);
   glutPostRedisplay();
-  glutTimerFunc(120, screenUpdate, 1);
+  glutTimerFunc(delay, screenUpdate, 1);
 }
 
 void loadBackground()
@@ -146,9 +147,8 @@ void keyboardHandle(unsigned char key, int x, int y)
 void drawSnake()
 {
   Snake *tmp = snake;
-  int count = 0;
 
-  while (tmp->anterior != NULL)
+  do
   {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -164,7 +164,7 @@ void drawSnake()
     glVertex2f(tmp->quad.x4, tmp->quad.y4);
     glEnd();
     tmp = tmp->anterior;
-  }
+  } while (tmp != NULL);
 }
 
 void drawGrid()
@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
 
   // iniciando variaveis
   glClearColor(0.0, 1.0, 0.0, 0.0);
-  glutTimerFunc(120, screenUpdate, 1);
+  glutTimerFunc(delay, screenUpdate, 1);
 
   // loop de tratamento de eventos
   glutMainLoop();

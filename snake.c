@@ -1,17 +1,19 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "snake.h"
 
 Snake *criarSnake()
 {
-  int sprites[] = {2, 9, 9, 8};
+  int sprites[] = {2, 9, 8};
 
   Snake *head = NULL;
 
   Snake *tmp = NULL;
 
-  for (int x = 0; x <= 4; x++)
+  for (int x = 0; x < 3; x++)
   {
+
     Snake *cell = (Snake *)malloc(sizeof(Snake));
 
     if (head == NULL)
@@ -36,6 +38,7 @@ Snake *criarSnake()
       tmp->anterior = cell;
       cell->posterior = tmp;
       cell->sprite = sprites[x];
+      cell->direcao = 'R';
       cell->quad.x1 = tmp->quad.x1 - 10;
       cell->quad.x2 = tmp->quad.x2 - 10;
       cell->quad.x3 = tmp->quad.x3 - 10;
@@ -67,6 +70,63 @@ char controlaDirecao(char direcaoNova, char direcaoAtual)
   return direcaoAtual;
 }
 
+void atualizaSprite(Snake *snake)
+{
+  if (snake->posterior != NULL)
+    snake->direcao = snake->posterior->direcao;
+
+  // printf(" anterior: %p \n atual: %p \n posterior: %p\n\n", snake->anterior, snake, snake->posterior);
+
+  if (snake->anterior == NULL)
+  {
+    switch (snake->direcao)
+    {
+    case 'T':
+      snake->sprite = 5;
+      break;
+    case 'D':
+      snake->sprite = 6;
+      break;
+    case 'R':
+      snake->sprite = 8;
+      break;
+    case 'L':
+      snake->sprite = 7;
+      break;
+
+    default:
+      break;
+    }
+  }
+  else
+  {
+    if (snake->anterior->direcao == snake->posterior->direcao)
+    {
+      switch (snake->direcao)
+      {
+      case 'T':
+        snake->sprite = 10;
+        break;
+      case 'D':
+        snake->sprite = 10;
+        break;
+      case 'R':
+        snake->sprite = 9;
+        break;
+      case 'L':
+        snake->sprite = 9;
+        break;
+
+      default:
+        break;
+      }
+    }
+
+    if ((snake->posterior->direcao == 'T' || snake->posterior->direcao == 'D') && (snake->anterior->direcao == 'L' || snake->anterior->direcao == 'R'))
+      snake->sprite = 12;
+  }
+};
+
 void atualizaPosicaoSnake(Snake *snake, char direcaoAtual)
 {
   int coordx = 0, coordy = 0;
@@ -92,6 +152,27 @@ void atualizaPosicaoSnake(Snake *snake, char direcaoAtual)
   snake->quad.y2 += coordy;
   snake->quad.y3 += coordy;
   snake->quad.y4 += coordy;
+
+  snake->direcao = direcaoAtual;
+
+  switch (snake->direcao)
+  {
+  case 'T':
+    snake->sprite = 1;
+    break;
+  case 'D':
+    snake->sprite = 0;
+    break;
+  case 'R':
+    snake->sprite = 2;
+    break;
+  case 'L':
+    snake->sprite = 3;
+    break;
+
+  default:
+    break;
+  }
 
   while (snake->anterior != NULL)
   {

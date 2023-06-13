@@ -21,6 +21,7 @@ struct snake
 {
   Snake *posterior;
   int sprite;
+  char direcao;
   SnakeQuad quad;
   Snake *anterior;
 };
@@ -31,4 +32,5 @@ char controlaDirecao(char direcaoNova, char direcaoAtual);
 
 void moverSnake(Snake *snake, char direcaoAtual, int telaLargura, int telaAltura);
 
+void atualizaSprite(Snake *snake);
 #endif
