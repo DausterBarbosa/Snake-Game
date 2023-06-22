@@ -9,8 +9,10 @@
 #include <stdio.h>
 #include "stb_image.h"
 #include "snake.h"
+#include "fruit.h"
 
 Snake *snake;
+Fruit* fruit;
 
 GLuint textureIDs[18];
 GLuint bgID1, bgID2;
@@ -21,6 +23,7 @@ int delay = 180;
 void screenUpdate(int value)
 {
   moverSnake(snake, direcao, 200, 200);
+  comeuFruta(snake, fruit);
   glutPostRedisplay();
   glutTimerFunc(delay, screenUpdate, 1);
 }
@@ -191,6 +194,22 @@ void drawGrid()
   glEnd();
 }
 
+void drawFruit(){
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, textureIDs[17]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(fruit->x1, fruit->y1);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(fruit->x2, fruit->y2);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(fruit->x3, fruit->y3);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(fruit->x4, fruit->y4);
+	glEnd();
+}
+
 void draw()
 {
   glClear(GL_COLOR_BUFFER_BIT);
@@ -198,6 +217,7 @@ void draw()
   loadBackground();
   // drawSquare();
   drawSnake();
+  drawFruit();
   glFlush();
 }
 
@@ -215,6 +235,7 @@ int main(int argc, char *argv[])
   // glClearColor(1.0, 1.0, 1.0, 0.0); // Set display window colour to white
   // delimitando orientacoes do cenário
   snake = criarSnake();
+  fruit = criarFruta();
   loadTextureArray();
   gluOrtho2D(-100.0, 100.0, -100.0, 100.0);
 
