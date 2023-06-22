@@ -1,24 +1,28 @@
 #define STB_IMAGE_IMPLEMENTATION
+#define STB_TRUETYPE_IMPLEMENTATION
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
+#include "stb_image.h"
+#include "stb_truetype.h"
 #include <GL/glut.h>
 #endif
 #include <stdlib.h>
 #include <stdio.h>
-#include "stb_image.h"
 #include "snake.h"
 #include "fruit.h"
 
+Fruit *fruit;
+
 Snake *snake;
-Fruit* fruit;
 
 GLuint textureIDs[18];
+GLuint fontTextureIDs[15];
 GLuint bgID1, bgID2;
 char direcao = 'R';
 int sprite = 0;
-int delay = 180;
+int delay = 120;
 
 void screenUpdate(int value)
 {
@@ -166,6 +170,7 @@ void drawSnake()
     glTexCoord2f(0.0f, 1.0f);
     glVertex2f(tmp->quad.x4, tmp->quad.y4);
     glEnd();
+
     tmp = tmp->anterior;
   } while (tmp != NULL);
 }
@@ -194,20 +199,21 @@ void drawGrid()
   glEnd();
 }
 
-void drawFruit(){
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBindTexture(GL_TEXTURE_2D, textureIDs[17]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(fruit->x1, fruit->y1);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(fruit->x2, fruit->y2);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(fruit->x3, fruit->y3);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(fruit->x4, fruit->y4);
-	glEnd();
+void drawFruit()
+{
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glBindTexture(GL_TEXTURE_2D, textureIDs[17]);
+  glBegin(GL_QUADS);
+  glTexCoord2f(0.0f, 0.0f);
+  glVertex2f(fruit->x1, fruit->y1);
+  glTexCoord2f(1.0f, 0.0f);
+  glVertex2f(fruit->x2, fruit->y2);
+  glTexCoord2f(1.0f, 1.0f);
+  glVertex2f(fruit->x3, fruit->y3);
+  glTexCoord2f(0.0f, 1.0f);
+  glVertex2f(fruit->x4, fruit->y4);
+  glEnd();
 }
 
 void draw()
@@ -216,6 +222,7 @@ void draw()
   // drawGrid();
   loadBackground();
   // drawSquare();
+  // renderText(100.0f, 100.0f, "Hello, world!", 1.0f);
   drawSnake();
   drawFruit();
   glFlush();

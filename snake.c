@@ -5,13 +5,13 @@
 
 Snake *criarSnake()
 {
-  int sprites[] = {2, 9, 8};
+  int sprites[] = {2, 9, 9, 9, 9, 9, 8};
 
   Snake *head = NULL;
 
   Snake *tmp = NULL;
 
-  for (int x = 0; x < 3; x++)
+  for (int x = 0; x < 7; x++)
   {
 
     Snake *cell = (Snake *)malloc(sizeof(Snake));
@@ -38,7 +38,6 @@ Snake *criarSnake()
       tmp->anterior = cell;
       cell->posterior = tmp;
       cell->sprite = sprites[x];
-      cell->direcao = 'R';
       cell->quad.x1 = tmp->quad.x1 - 10;
       cell->quad.x2 = tmp->quad.x2 - 10;
       cell->quad.x3 = tmp->quad.x3 - 10;
@@ -70,66 +69,12 @@ char controlaDirecao(char direcaoNova, char direcaoAtual)
   return direcaoAtual;
 }
 
-void atualizaSprite(Snake *snake)
-{
-  if (snake->posterior != NULL)
-    snake->direcao = snake->posterior->direcao;
-
-  // printf(" anterior: %p \n atual: %p \n posterior: %p\n\n", snake->anterior, snake, snake->posterior);
-
-  if (snake->anterior == NULL)
-  {
-    switch (snake->direcao)
-    {
-    case 'T':
-      snake->sprite = 5;
-      break;
-    case 'D':
-      snake->sprite = 6;
-      break;
-    case 'R':
-      snake->sprite = 8;
-      break;
-    case 'L':
-      snake->sprite = 7;
-      break;
-
-    default:
-      break;
-    }
-  }
-  else
-  {
-    if (snake->anterior->direcao == snake->posterior->direcao)
-    {
-      switch (snake->direcao)
-      {
-      case 'T':
-        snake->sprite = 10;
-        break;
-      case 'D':
-        snake->sprite = 10;
-        break;
-      case 'R':
-        snake->sprite = 9;
-        break;
-      case 'L':
-        snake->sprite = 9;
-        break;
-
-      default:
-        break;
-      }
-    }
-
-    if ((snake->posterior->direcao == 'T' || snake->posterior->direcao == 'D') && (snake->anterior->direcao == 'L' || snake->anterior->direcao == 'R'))
-      snake->sprite = 12;
-  }
-};
-
 void atualizaPosicaoSnake(Snake *snake, char direcaoAtual)
 {
   int coordx = 0, coordy = 0;
+  int count = 1;
+
+  Snake *secondBody = snake->anterior;
 
   if (direcaoAtual == 'T')
     coordy = +10;
@@ -153,21 +98,22 @@ void atualizaPosicaoSnake(Snake *snake, char direcaoAtual)
   snake->quad.y3 += coordy;
   snake->quad.y4 += coordy;
 
-  snake->direcao = direcaoAtual;
-
-  switch (snake->direcao)
+  switch (direcaoAtual)
   {
   case 'T':
     snake->sprite = 1;
     break;
+
   case 'D':
     snake->sprite = 0;
     break;
-  case 'R':
-    snake->sprite = 2;
-    break;
+
   case 'L':
     snake->sprite = 3;
+    break;
+
+  case 'R':
+    snake->sprite = 2;
     break;
 
   default:
@@ -183,9 +129,98 @@ void atualizaPosicaoSnake(Snake *snake, char direcaoAtual)
 
     tmpQuad1 = tmpQuad2;
   }
+
+  do
+  {
+    atualizaSprite(secondBody);
+    secondBody = secondBody->anterior;
+  } while (secondBody != NULL);
 }
 
 void moverSnake(Snake *snake, /*Fruta* fruta,*/ char direcaoAtual, int telaLargura, int telaAltura)
 {
   atualizaPosicaoSnake(snake, direcaoAtual);
+}
+
+void atualizaSprite(Snake *snake)
+{
+
+  char posicaoAnterior, posicaoPosterior;
+
+  if (snake->anterior != NULL && snake->quad.x1 > snake->anterior->quad.x1)
+    posicaoAnterior = 'L';
+
+  if (snake->anterior != NULL && snake->quad.x1 < snake->anterior->quad.x1)
+    posicaoAnterior = 'R';
+
+  if (snake->anterior != NULL && snake->quad.y1 > snake->anterior->quad.y1)
+    posicaoAnterior = 'D';
+
+  if (snake->anterior != NULL && snake->quad.y1 < snake->anterior->quad.y1)
+    posicaoAnterior = 'T';
+
+  if (snake->quad.x1 > snake->posterior->quad.x1)
+    posicaoPosterior = 'L';
+
+  if (snake->quad.x1 < snake->posterior->quad.x1)
+    posicaoPosterior = 'R';
+
+  if (snake->quad.y1 > snake->posterior->quad.y1)
+    posicaoPosterior = 'D';
+
+  if (snake->quad.y1 < snake->posterior->quad.y1)
+    posicaoPosterior = 'T';
+
+  if (snake->anterior != NULL)
+  {
+    if (posicaoAnterior == 'T' && posicaoPosterior == 'L')
+      snake->sprite = 12;
+
+    if (posicaoAnterior == 'L' && posicaoPosterior == 'T')
+      snake->sprite = 12;
+
+    if (posicaoAnterior == 'T' && posicaoPosterior == 'R')
+      snake->sprite = 11;
+
+    if (posicaoAnterior == 'R' && posicaoPosterior == 'T')
+      snake->sprite = 11;
+
+    if (posicaoAnterior == 'D' && posicaoPosterior == 'L')
+      snake->sprite = 14;
+
+    if (posicaoAnterior == 'L' && posicaoPosterior == 'D')
+      snake->sprite = 14;
+
+    if (posicaoAnterior == 'D' && posicaoPosterior == 'R')
+      snake->sprite = 13;
+
+    if (posicaoAnterior == 'R' && posicaoPosterior == 'D')
+      snake->sprite = 13;
+
+    if (posicaoAnterior == 'D' && posicaoPosterior == 'T')
+      snake->sprite = 10;
+
+    if (posicaoAnterior == 'T' && posicaoPosterior == 'D')
+      snake->sprite = 10;
+
+    if (posicaoAnterior == 'L' && posicaoPosterior == 'R')
+      snake->sprite = 9;
+
+    if (posicaoAnterior == 'R' && posicaoPosterior == 'L')
+      snake->sprite = 9;
+  }
+  else
+  {
+    if (posicaoPosterior == 'T')
+      snake->sprite = 5;
+
+    if (posicaoPosterior == 'D')
+      snake->sprite = 6;
+
+    if (posicaoPosterior == 'L')
+      snake->sprite = 7;
+
+    if (posicaoPosterior == 'R')
+      snake->sprite = 8;
+  }
 }

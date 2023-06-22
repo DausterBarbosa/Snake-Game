@@ -21,7 +21,6 @@ struct snake
 {
   Snake *posterior;
   int sprite;
-  char direcao;
   SnakeQuad quad;
   Snake *anterior;
 };
