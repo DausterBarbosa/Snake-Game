@@ -152,16 +152,16 @@ void keyboardHandle(unsigned char key, int x, int y)
   switch (key)
   {
   case 'w':
-    direcao = 'T';
+    direcao = controlaDirecao('T', direcao);
     break;
   case 's':
-    direcao = 'D';
+    direcao = controlaDirecao('D', direcao);
     break;
   case 'a':
-    direcao = 'L';
+    direcao = controlaDirecao('L', direcao);
     break;
   case 'd':
-    direcao = 'R';
+    direcao = controlaDirecao('R', direcao);
     break;
 
   case 'r':

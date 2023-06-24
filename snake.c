@@ -139,15 +139,35 @@ void atualizaPosicaoSnake(Snake *snake, char direcaoAtual)
   } while (secondBody != NULL);
 }
 
+int verificaAutoColisao(Snake* snake){
+	Snake* head = snake;
+	Snake* body = head->anterior;
+
+	do{
+		if(head->quad.x1 == body->quad.x1 && head->quad.x2 == body->quad.x2 && head->quad.x3 == body->quad.x3 && head->quad.x4 == body->quad.x4 &&
+		head->quad.y1 == body->quad.y1 && head->quad.y2 == body->quad.y2 && head->quad.y3 == body->quad.y3 && head->quad.y4 == body->quad.y4){
+			return 0;
+		}
+
+		body = body->anterior;
+	}while(body->anterior != NULL);
+
+	return 1;
+}
+
 int moverSnake(Snake *snake, /*Fruta* fruta,*/ char direcaoAtual, int telaEsquerda, int telaDireita, int telaSuperior, int telaInferior)
 {
   Snake *head = snake;
   atualizaPosicaoSnake(snake, direcaoAtual);
 
-  if (head->quad.x2 >= telaDireita || head->quad.x1 <= telaEsquerda)
+  if(verificaAutoColisao(snake) == 0){
+	return 0;
+  }
+
+  if (head->quad.x2 >= telaDireita + 1 || head->quad.x1 <= telaEsquerda - 1)
     return 0;
 
-  if (head->quad.y1 >= telaSuperior || head->quad.y1 <= telaInferior)
+  if (head->quad.y1 >= telaSuperior || head->quad.y1 <= telaInferior - 1)
     return 0;
 
   return 1;

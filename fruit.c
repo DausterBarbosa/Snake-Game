@@ -22,10 +22,28 @@ Fruit *criarFruta()
   return fruit;
 }
 
-void atualizarFruta(Fruit *fruit)
+void atualizarFruta(Fruit *fruit, Snake* snake)
 {
-  fruit->x1 = (rand() % 20 - 10) * 10;
-  fruit->y1 = (rand() % 20 - 10) * 10;
+  int aceito = -1, randomx1, randomy1;
+
+  while(aceito != 1){
+	aceito = 1;
+	randomx1 = (rand() % 20 - 10) * 10;
+	randomy1 = (rand() % 20 - 10) * 10;
+
+	Snake* tmp = snake;
+
+	while(tmp->anterior != NULL){
+		if(tmp->quad.x1 == randomx1 && tmp->quad.y1 == randomy1){
+			aceito = 0;
+		}
+
+		tmp = tmp->anterior;
+	}
+  }
+
+  fruit->x1 = randomx1;
+  fruit->y1 = randomy1;
   fruit->x2 = fruit->x1 + 10;
   fruit->y2 = fruit->y1;
   fruit->x3 = fruit->x1 + 10;
@@ -72,6 +90,6 @@ void comeuFruta(Snake *snake, Fruit *fruit)
   {
     aumentarSnake(snake, fruit);
 
-    atualizarFruta(fruit);
+    atualizarFruta(fruit, snake);
   }
 }
