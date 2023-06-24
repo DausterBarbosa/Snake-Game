@@ -17,19 +17,33 @@ Fruit *fruit;
 
 Snake *snake;
 
-GLuint textureIDs[18];
-GLuint fontTextureIDs[15];
+GLuint textureIDs[20];
 GLuint bgID1, bgID2;
+int gameState = 2;
 char direcao = 'R';
 int sprite = 0;
 int delay = 120;
+void resetGame()
+{
+  snake = criarSnake();
+  fruit = criarFruta();
+  direcao = 'R';
+}
 
 void screenUpdate(int value)
 {
-  moverSnake(snake, direcao, 200, 200);
-  comeuFruta(snake, fruit);
-  glutPostRedisplay();
-  glutTimerFunc(delay, screenUpdate, 1);
+  if (value == 1)
+  {
+    comeuFruta(snake, fruit);
+    int result = moverSnake(snake, direcao, -100, 100, 100, -100);
+
+    if (result == 0)
+      gameState = 0;
+
+    glutPostRedisplay();
+  }
+
+  glutTimerFunc(delay, screenUpdate, gameState);
 }
 
 void loadBackground()
@@ -128,10 +142,13 @@ void loadTextureArray()
   loadTexture("assets/bg_1.png", 15);
   loadTexture("assets/bg_2.png", 16);
   loadTexture("assets/apple.png", 17);
+  loadTexture("assets/texto_morte.png", 18);
+  loadTexture("assets/texto_pause.png", 19);
 }
 
 void keyboardHandle(unsigned char key, int x, int y)
 {
+
   switch (key)
   {
   case 'w':
@@ -146,9 +163,60 @@ void keyboardHandle(unsigned char key, int x, int y)
   case 'd':
     direcao = 'R';
     break;
+
+  case 'r':
+    if (gameState == 0)
+      gameState = 1;
+    resetGame();
+    glutPostRedisplay();
+    break;
+
+  case 'p':
+    if (gameState == 2)
+      gameState = 1;
+    else if (gameState == 1)
+      gameState = 2;
+
+    glutPostRedisplay();
+    break;
+
   default:
     break;
   }
+}
+
+void drawPauseText()
+{
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glBindTexture(GL_TEXTURE_2D, textureIDs[19]);
+  glBegin(GL_QUADS);
+  glTexCoord2f(0.0f, 1.0f);
+  glVertex2f(-60, 30);
+  glTexCoord2f(1.0f, 1.0f);
+  glVertex2f(60, 30);
+  glTexCoord2f(1.0f, 0.0f);
+  glVertex2f(60, 70);
+  glTexCoord2f(0.0f, 0.0f);
+  glVertex2f(-60, 70);
+  glEnd();
+}
+
+void drawDeadText()
+{
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glBindTexture(GL_TEXTURE_2D, textureIDs[18]);
+  glBegin(GL_QUADS);
+  glTexCoord2f(0.0f, 1.0f);
+  glVertex2f(-60, 30);
+  glTexCoord2f(1.0f, 1.0f);
+  glVertex2f(60, 30);
+  glTexCoord2f(1.0f, 0.0f);
+  glVertex2f(60, 70);
+  glTexCoord2f(0.0f, 0.0f);
+  glVertex2f(-60, 70);
+  glEnd();
 }
 
 void drawSnake()
@@ -205,13 +273,13 @@ void drawFruit()
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glBindTexture(GL_TEXTURE_2D, textureIDs[17]);
   glBegin(GL_QUADS);
-  glTexCoord2f(0.0f, 0.0f);
-  glVertex2f(fruit->x1, fruit->y1);
-  glTexCoord2f(1.0f, 0.0f);
-  glVertex2f(fruit->x2, fruit->y2);
-  glTexCoord2f(1.0f, 1.0f);
-  glVertex2f(fruit->x3, fruit->y3);
   glTexCoord2f(0.0f, 1.0f);
+  glVertex2f(fruit->x1, fruit->y1);
+  glTexCoord2f(1.0f, 1.0f);
+  glVertex2f(fruit->x2, fruit->y2);
+  glTexCoord2f(1.0f, 0.0f);
+  glVertex2f(fruit->x3, fruit->y3);
+  glTexCoord2f(0.0f, 0.0f);
   glVertex2f(fruit->x4, fruit->y4);
   glEnd();
 }
@@ -225,6 +293,12 @@ void draw()
   // renderText(100.0f, 100.0f, "Hello, world!", 1.0f);
   drawSnake();
   drawFruit();
+  if (gameState == 0)
+    drawDeadText();
+
+  if (gameState == 2)
+    drawPauseText();
+
   glFlush();
 }
 
@@ -252,7 +326,7 @@ int main(int argc, char *argv[])
 
   // iniciando variaveis
   glClearColor(0.0, 1.0, 0.0, 0.0);
-  glutTimerFunc(delay, screenUpdate, 1);
+  glutTimerFunc(delay, screenUpdate, gameState);
 
   // loop de tratamento de eventos
   glutMainLoop();

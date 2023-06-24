@@ -47,7 +47,7 @@ void aumentarSnake(Snake *snake, Fruit *fruit)
   newCell->quad.x4 = snake->quad.x4;
   newCell->quad.y4 = snake->quad.y4;
 
-  newCell->sprite = 9;
+  newCell->sprite = snake->anterior->sprite;
 
   snake->quad.x1 = fruit->x1;
   snake->quad.y1 = fruit->y1;
@@ -62,6 +62,8 @@ void aumentarSnake(Snake *snake, Fruit *fruit)
   newCell->anterior = snake->anterior;
   newCell->posterior = snake;
   snake->anterior = newCell;
+
+  atualizaSprite(newCell);
 }
 
 void comeuFruta(Snake *snake, Fruit *fruit)
@@ -69,6 +71,7 @@ void comeuFruta(Snake *snake, Fruit *fruit)
   if (snake->quad.x1 == fruit->x1 && snake->quad.x2 == fruit->x2 && snake->quad.x3 == fruit->x3 && snake->quad.x4 == fruit->x4 && snake->quad.y1 == fruit->y1 && snake->quad.y2 == fruit->y2 && snake->quad.y3 == fruit->y3 && snake->quad.y4 == fruit->y4)
   {
     aumentarSnake(snake, fruit);
+
     atualizarFruta(fruit);
   }
 }

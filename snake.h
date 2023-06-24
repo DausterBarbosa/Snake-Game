@@ -29,7 +29,7 @@ Snake *criarSnake();
 
 char controlaDirecao(char direcaoNova, char direcaoAtual);
 
-void moverSnake(Snake *snake, char direcaoAtual, int telaLargura, int telaAltura);
+int moverSnake(Snake *snake, char direcaoAtual, int telaEsquerda, int telaDireita, int telaSuperior, int telaInferior);
 
 void atualizaSprite(Snake *snake);
 #endif

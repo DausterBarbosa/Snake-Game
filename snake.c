@@ -6,13 +6,13 @@
 
 Snake *criarSnake()
 {
-  int sprites[] = {2, 9, 9, 9, 9, 9, 8};
+  int sprites[] = {2, 9, 8};
 
   Snake *head = NULL;
 
   Snake *tmp = NULL;
 
-  for (int x = 0; x < 7; x++)
+  for (int x = 0; x < 3; x++)
   {
 
     Snake *cell = (Snake *)malloc(sizeof(Snake));
@@ -139,9 +139,18 @@ void atualizaPosicaoSnake(Snake *snake, char direcaoAtual)
   } while (secondBody != NULL);
 }
 
-void moverSnake(Snake *snake, /*Fruta* fruta,*/ char direcaoAtual, int telaLargura, int telaAltura)
+int moverSnake(Snake *snake, /*Fruta* fruta,*/ char direcaoAtual, int telaEsquerda, int telaDireita, int telaSuperior, int telaInferior)
 {
+  Snake *head = snake;
   atualizaPosicaoSnake(snake, direcaoAtual);
+
+  if (head->quad.x2 >= telaDireita || head->quad.x1 <= telaEsquerda)
+    return 0;
+
+  if (head->quad.y1 >= telaSuperior || head->quad.y1 <= telaInferior)
+    return 0;
+
+  return 1;
 }
 
 void atualizaSprite(Snake *snake)
